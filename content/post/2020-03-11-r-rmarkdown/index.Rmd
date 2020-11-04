@@ -1,0 +1,101 @@
+---
+title: "Police violence"
+author: "Rasa Ashrafi"
+date: "03-11-2020,15:04"
+categories: ["R"]
+tags: ["R Markdown", "plot"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+<div dir='rtl'>
+<p style='font-size:16pt'>
+خشونت نژادی پلیس در آمریکا
+</p>
+<p style='font-size:14pt'>
+سال 2020 آمریکا شاهد اعتراضات عمومی به خشونت پلیس نسبت به سیاهپوستان بود. اعتراضاتی که با کشته شدن جرج فلوید و انتشار عمومی فیلم لحظه مرگ او توسط پلیس به ایالت های مختلف گسترش یافت. بسیاری از اقلیت های نژادی اعتقاد دارند پلیس نسبت به آنان خشونت بیشتری اعمال می کند و نژادپرستی در رفتار ماموران پلیس عامل کشته شدن افراد بیگناه خصوصا در بین سیاهپوستان است. بر اساس داده هایی که روزنامه واشنگتن پست از افراد کشته شده بدست مأموران پلیس منتشر کرده می توان این موضوع را بر اساس آمار بررسی کرد.
+</p>
+</div>
+```{r include=FALSE}
+library(tidyverse)
+```
+
+```{r include=FALSE}
+Police_shooting <- read_csv('https://raw.githubusercontent.com/washingtonpost/data-police-shootings/master/fatal-police-shootings-data.csv')
+Police_shooting$year <- strftime(Police_shooting$date, "%Y")
+Police_shooting$race2[Police_shooting$race=='A'] <- 'Other'
+Police_shooting$race2[Police_shooting$race=='B'] <- 'Black'
+Police_shooting$race2[Police_shooting$race=='H'] <- 'Hispanic'
+Police_shooting$race2[Police_shooting$race=='N'] <- 'Other'
+Police_shooting$race2[Police_shooting$race=='W'] <- 'White'
+Police_shooting$race2[Police_shooting$race=='O'] <- 'Other'
+Police_shooting$race2[is.na(Police_shooting$race)] <- "Unknown"
+Police_shooting$race2 <- factor(Police_shooting$race2, levels=c('White', 'Black', 'Hispanic', 'Asian', 'Native American', 'Other', 'Unknown'))
+```
+
+
+```{r  echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
+
+Police_shooting %>% group_by(year, race2) %>%
+  summarise(count=n()) %>% 
+  mutate(percent= round(count/sum(count)*100, 1)) %>% 
+  ggplot(aes(year))+
+  geom_bar(stat='identity',aes(y= percent, fill=forcats::fct_rev(race2)), position=position_dodge())+
+  #geom_text(aes(y=percent,label=percent), color='black')+
+  xlab(label = 'YEAR')+
+  ylab(label = 'Percentage of killed by police')+
+  labs(fill = 'Race')+
+  theme_minimal()+
+  ggtitle ('Suspects Killed by Police by Race')+
+  scale_fill_brewer(palette="Set3")
+ 
+```
+<div dir='rtl'>
+<p style='font-size:14pt'>
+بر اساس اطلاعاتی که واشنگتون پست جمع آوری کرده از ابتدای سال 2015 تا آخر اکتبر سال 2020 سالانه نزدیک به 1000 نفر توسط ماموران پلیس کشته می شوند
+ همانطور که در نمودار دیده می شود در فاصله سالهای 2015 تا 2019 سهم سفیدپوستان در میان افراد کشته شده توسط پلیس از 50 درص درصد به 40 درصد رسیده است.
+سیاهپوستان در این مدت بین حدود 23 تا 26 درصد کشته شدگان هستند. 
+ بر اساس اطلاعات سایت سرشماری آمریکا (https://www.census.gov) سیاهپوستان 13 درصد   از جمعیت آمریکا و سفیدپوستان 60 درصد آن را تشکیل می دهند. در نتیجه می توان گفت  سیاهپوستان بیش از سفیدپوستان توسط پلیس کشته می شوند. از کل جمعیت یعنی 18.5 درصد ندارد و حتی اندکی کمتر است. این مسسئله نشان می دهد سیاهپوستان بیش از کسانی که پوست روشن دارند به دست پلیس کشته می شوند.  در نمودار زیر ترکیب سنی افراد کشته شده بi دست پلیس بر اساس نژاد دیده می شود. بازه سنی اغلب غیرسفیدپوستان کمتر از سفیدپوستان است که نشان دهنده نوعی از سوگیری پلیس نسبت به جوانان غیرسفیدپوست است. 
+</p>
+</div>
+```{r echo=FALSE, fig.align='center', fig.height=3, fig.width=5, message=FALSE, warning=FALSE}
+
+Police_shooting %>% ggplot(aes(age))+
+  geom_freqpoly(aes(color=race2))+
+  xlab(label = 'AGE')+
+  ylab(label = 'NUmber of suspects killed by police') + 
+  theme_minimal()+
+  ggtitle ('Age Distribiution of Suspects Killed by Ploice')+
+  scale_fill_brewer(palette="Set3")
+ 
+```
+<div dir='rtl'>
+<p style='font-size:14pt'>
+مسلح بودن یکی از دلایلی است که پلیس برای شلیک به قربانی ارائه می کند. با توجه به آزاد بودن حمل اسلحه پلیس نسبت به کوچکترین حرکت مشکوک از فردی که قصد بازداشت یا بازرسی او دارد حساس است. در  نمودار زیر اثر این عامل بر مرگ افراد برای نژادهای مختلف مقایسه شده است. 
+</p>
+</div>
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
+
+Police_shooting %>% mutate(armed2=ifelse(armed=='unarmed', 'unarmed', 'armed')) %>% 
+  filter(!is.na(armed2)) %>% 
+  group_by(race2, armed2) %>% 
+  summarise(c=n()) %>% 
+  mutate(tc=c/sum(c)) %>% 
+  ggplot(aes(race2))+
+  geom_bar(aes(y= tc, fill=forcats::fct_rev(armed2)),  stat='identity', width = 0.5)+
+  theme_minimal()+
+  #geom_text(aes(label=c, y=tc),vjust=1, color='black')+
+  xlab(label = 'RACE')+
+  ylab(label = 'Number of suspects killed by police')+
+  labs(fill = 'ARMED')+
+  ggtitle ('Armed and Unarmed Suspects Killed by Police')+
+  scale_fill_brewer(palette="Set3")
+  
+```
+<div dir='rtl'>
+<p style='font-size:14pt'>
+همانطور که دیده می شود سهم سیاهپوستان غیرمسلح در کل افراد سیاهپوست کشته شده بدست پلیس بیشتر از سهم سفیدپوستان مسلح است. نشن می دهد پلیس بیشتر احتمال دارد که یک سیاهپوست غیرمسلح را با گلوله از پا درآورد.
+با توجه به آنچه گفته شد می توان گفت پلیس آمریکا در صورت احساس خطر در مورد یک فرد مشکوک نسبت به سیاهپوستان سخت گیرتر است و احتمال بیشتری دارد که به آنها شلیک کند.
+</p>
+</div>

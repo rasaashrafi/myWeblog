@@ -1,0 +1,59 @@
+baseurl = "/"
+languageCode = "en-us"
+title = "Understanding the World through Data"
+theme = "blackburn"
+author = "Rasa Ashrafi"
+copyright = "&copy; 2020. All rights reserved."
+canonifyurls = true
+paginate = 10
+
+ignoreFiles =["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"]
+[indexes]
+  tag = "tags"
+  topic = "topics"
+
+[params]
+  # Shown in the home page
+  subtitle = ""
+  brand = "RASA"
+  googleAnalytics = "NONE"
+  disqus = "NONE"
+  # CSS name for highlight.js
+  highlightjs = "rasa"
+  dateFormat = "03-11-2020,15:04"
+
+[menu]
+  # Shown in the side menu.
+  [[menu.main]]
+    name = "Home"
+    pre = "<i class='fa fa-home fa-fw'></i>"
+    weight = 1
+    identifier = "home"
+    url = "/"
+  [[menu.main]]
+    name = "Posts"
+    pre = "<i class='fa fa-list fa-fw'></i>"
+    weight = 2
+    identifier = "post"
+    url = "/post/"
+  [[menu.main]]
+    name = "About"
+    pre = "<i class='fa fa-user fa-fw'></i>"
+    weight = 3
+    identifier = "about"
+    url = "/about/"
+  [[menu.main]]
+    name = "Contact"
+    pre = "<i class='fa fa-phone fa-fw'></i>"
+    weight = 4
+    url = "/contact/"
+
+[social]
+  # Link your social networking accouns to the side menu
+  # by entering your username or ID.
+  twitter = "*"
+  facebook = "*"
+  instagram = "*"
+  github = "https://github.com/rasaashrafi"
+  stackoverflow = "*"
+  linkedin = "*"
